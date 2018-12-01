@@ -16,38 +16,54 @@ def errorCode(code=404, msg='Object Not Found :( '):
     :param msg: Message to return
     :return: error
     """
-    error = dict()
-    error['code'] = code
-    error['error'] = msg
-    return error
+    data = dict()
+    data['code'] = code
+    data['error'] = msg
+    return data
 
+# ==
 def createDB(*args, **kwargs):
     try:
         return 'create db'
     except:
         errorCode()
 
-# List Notes
-def listNote(page=0, batch=40):
+# ==  List Notes
+def listNote(**kwargs):
     try:
-       # note = Note.objects.paginate(page=page, per_page=batch)
-       note = Note.objects
-       return note
-    except:
-        return errorCode()
-
-
-# Read Note (id)
-def readNote(*args, **kwargs):
-    try:
-        note = Note.objects(*args, **kwargs).first()
-        print(note.count())
-
+        note = Note.objects(**kwargs)
         return note
     except:
         return errorCode()
 
-# New / Create Note
+
+# == Pagination Note
+def pageNote(page=1, per_page=40, **kwargs):
+    try:
+       note = Note.objects(deleted=False).paginate(page=page, per_page=per_page)
+       data = dict()
+       data['page_current'] = note.page
+       data['page_total'] = note.pages
+       data['per_page'] = note.per_page
+       data['total_items'] = note.total
+       data['data'] = note.items
+       return data
+    except:
+        note = errorCode()
+        return note
+
+
+
+# ==  Read Note
+def readNote(nid):
+    try:
+        note = Note.objects(id=nid)
+        return note
+    except:
+        return errorCode()
+
+
+# == New / Create Note
 def newNote(slug, content, title=None, **kwargs):
     try:
         note = Note(slug=slug, title=title, content=content, fat={**kwargs})
@@ -55,6 +71,7 @@ def newNote(slug, content, title=None, **kwargs):
         return note
     except:
         return errorCode(404, 'Note not Created!')
+
 
 # Update Note
 def updateNote(nid, noteData):
@@ -74,8 +91,12 @@ def updateNote(nid, noteData):
 def delNote(nid):
     # Soft Delete note
     try:
-        note = Note.objects(_id=nid).first()
+        note = Note.objects(id=nid).update(deleted=True)
+        data = dict()
+        data['total'] = note
+        data['id'] = nid
+        return data
     except:
         return errorCode()
-    return 'deleted'
+
 
