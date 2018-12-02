@@ -11,7 +11,7 @@ from flask_netpad.models import db, Note
 
 def errorCode(code=404, msg='Object Not Found :( '):
     """
-    Returns a custom error code in a dictionary
+    errorCode - Returns a custom error code in a dictionary
     :param code: Error Code 
     :param msg: Message to return
     :return: error
@@ -23,6 +23,12 @@ def errorCode(code=404, msg='Object Not Found :( '):
 
 # ==
 def createDB(*args, **kwargs):
+    """
+    createDB -
+    :param args:
+    :param kwargs:
+    :return:
+    """
     try:
         return 'create db'
     except:
@@ -57,7 +63,7 @@ def pageNote(page=1, per_page=40, **kwargs):
 # ==  Read Note
 def readNote(nid):
     try:
-        note = Note.objects(id=nid)
+        note = Note.objects(id=nid).first()
         return note
     except:
         return errorCode()

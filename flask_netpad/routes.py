@@ -55,7 +55,8 @@ def pageNote_route():
 @app.route('/note/<nid>/')
 def readNote_route(nid):
     #note = readNote(id=nid).first()
-    note = readNote(id=nid)
+    note = readNote(nid=nid)
+    #note = Note.objects(id=nid).first()
     return jsonify(note)
 
 
